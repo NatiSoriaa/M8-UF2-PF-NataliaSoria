@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Biblioteca de Clásicos</h1>
-    <table>
+    <table id="book-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -19,16 +19,19 @@
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody id="book-table"></tbody>
+        <tbody></tbody>
     </table>
 
-    <form id="book-form">
-        <input type="hidden" id="book-id">
-        <input type="text" id="book-title" placeholder="Título" required>
-        <input type="text" id="book-author" placeholder="Autor" required>
-        <input type="number" id="book-year" placeholder="Año" required>
-        <button type="button" id="createButton">AÑADIR LIBRO</button>
-    </form>
+    <div id="actions-section" style="display: none;">
+        <form id="book-form">
+            <input type="hidden" id="book-id">
+            <input type="text" id="book-title" placeholder="Título" required>
+            <input type="text" id="book-author" placeholder="Autor" required>
+            <input type="number" id="book-year" placeholder="Año" required>
+            <button type="button" id="createButton">AÑADIR LIBRO</button>
+        </form>
+    </div>
+    
     <button type="button" id="downloadButton">DOWNLOAD</button>
 
     <script src="script.js"></script>

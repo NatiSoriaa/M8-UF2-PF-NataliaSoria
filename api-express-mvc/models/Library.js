@@ -17,7 +17,7 @@ class Library {
     // 2.Abrimos la conexión
     connection.connect(error => {
       if (error) throw error;
-      console.log("Successfully connected to the MYSQL database.");
+      console.log("Successfully connected to the database.");
     });
 
     // 3.Dejamos la conexión en la propiedad connection, promisificada
@@ -29,14 +29,15 @@ class Library {
     this.connection.end();
   }
 
+  // Métodos de la clase Library
 
-  // métodos de la clase Library
+  // Listar todos los libros
   listAll = async () => {
-    console.log(this.connection)
     const [results, fields] = await this.connection.query("SELECT * FROM books");
     return results;
   }
 
+  // Crear un nuevo libro
   create = async (newBook) => {
     try {
       const [results, fields] = await this.connection.query("INSERT INTO books SET ?", newBook);
@@ -45,15 +46,34 @@ class Library {
     catch (error) {
       return error;
     }
-
   };
 
-  update = () => {
+  // Actualizar un libro
+  update = async (updatedBook, bookId) => {
+    try {
+      const [results, fields] = await this.connection.query(
+        "UPDATE books SET ? WHERE id = ?",
+        [updatedBook, bookId]
+      );
+      return results.affectedRows;
+    }
+    catch (error) {
+      return error;
+    }
+  };
 
-  }
-
-  delete = () => {
-
+  // Eliminar un libro
+  delete = async (bookId) => {
+    try {
+      const [results, fields] = await this.connection.query(
+        "DELETE FROM books WHERE id = ?",
+        [bookId]
+      );
+      return results.affectedRows;
+    }
+    catch (error) {
+      return error;
+    }
   }
 }
 
