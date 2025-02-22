@@ -1,67 +1,73 @@
 document.addEventListener('DOMContentLoaded', () => {
+    checkAuth(); // Verificar autenticación al cargar la página
 
-    // Verificamos si el usuario está autenticado al cargar la página
-    checkAuth();
-
+    // Mostrar contenido basado en la autenticación
     if (document.getElementById("book-table")) {
-        fetchBooks(); 
+        fetchBooks();  // Cargar libros si es posible
     }
+
     if (document.querySelector("#createButton")) {
         document.querySelector('#createButton').addEventListener('click', createBook);
     }
-    if (document.querySelector("#downloadButton")) {
-        document.querySelector('#downloadButton').addEventListener('click', downloadVideo);
-    }
+
     if (document.querySelector("#loginForm")) {
         document.querySelector("#loginForm").addEventListener("submit", loginUser);
+    }
+
+    if (document.querySelector("#logoutButton")) {
+        document.querySelector("#logoutButton").addEventListener('click', logoutUser);
     }
 });
 
 async function loginUser(event) {
-    event.preventDefault(); // Prevenir el envío por defecto del formulario
+    event.preventDefault();
 
-    // Obtenemos los datos del formulario
     const username = document.querySelector("#username").value;
     const password = document.querySelector("#password").value;
 
-    // Enviamos los datos al backend para autenticar al usuario
-    let apiUrl = "http://localhost:5000/api/login"; // Cambia a la URL de tu API de login
-    let userData = { username: username, password: password };
+    let apiUrl = "http://localhost:5000/api/login";
+    let userData = { username, password };
 
     try {
         let response = await fetch(apiUrl, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData),
         });
 
         let data = await response.json();
 
         if (response.ok) {
-            // Si la autenticación es exitosa, guardamos el token
-            localStorage.setItem("token", data.token); // Guarda el token en localStorage
-
-            // Redirigimos a la página principal
-            window.location.href = "index.html"; // Redirige a la página de libros
+            console.log("✅ Token recibido:", data.token);
+            localStorage.setItem("token", data.token);
+            window.location.href = "index.html";
         } else {
-            // Si hay un error (usuario/contraseña incorrectos), mostramos un mensaje de error
-            document.getElementById("errorMessage").innerText = data.error || "Error de autenticación";
+            document.getElementById("errorMessage").innerText = data.message || "Error de autenticación";
         }
     } catch (error) {
-        console.error("Error en el login:", error);
+        console.error("❌ Error en el login:", error);
         document.getElementById("errorMessage").innerText = "Hubo un error con la solicitud.";
     }
 }
 
-// Función para verificar si el usuario tiene un token
+function logoutUser() {
+    // Eliminar el token del localStorage
+    localStorage.removeItem("token");
+
+    // Redirigir al login o actualizar la interfaz de usuario
+    window.location.href = "login.html"; // Puedes redirigir al login o recargar la página
+
+    // O si quieres solo recargar la página sin redirigir, usa:
+    // location.reload();
+}
+
+// Verificar autenticación al cargar la página
 async function checkAuth() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const actionsSection = document.getElementById("actions-section");
+    console.log("Token enviado en checkAuth:", token);
 
     if (!token) {
-        console.log("No hay token. Acceso restringido.");
         if (actionsSection) actionsSection.style.display = "none";
         return;
     }
@@ -80,13 +86,12 @@ async function checkAuth() {
             localStorage.removeItem("token"); // Eliminar token inválido
             if (actionsSection) actionsSection.style.display = "none";
         } else {
-            if (actionsSection) actionsSection.style.display = "block";
+            if (actionsSection) actionsSection.style.display = "block"; // Mostrar la biblioteca y sus funcionalidades
         }
     } catch (error) {
         console.error("Error al verificar autenticación:", error);
     }
 }
-
 
 
 async function fetchBooks() {

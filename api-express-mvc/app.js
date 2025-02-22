@@ -1,31 +1,18 @@
-const express = require('express')
-const cors = require('cors')
-const routes = require('./routes/routes.js')
-const { generateToken } = require('./mw/auth');
+const express = require('express');
+const cors = require('cors');
+const routes = require('./routes/routes.js');
+const auth = require('./mw/auth');
 
-// Instanciación del servidor
-const app = express()
 
-// Configurar middleware
-app.use(cors());          // para evitar CORS
-app.use(express.json());  // para parsear contenido JSON
+const app = express();
 
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
+// Configuración de middleware
+app.use(cors());
+app.use(express.json());
 
-    // Utilizamos la función generateToken de auth.js para verificar las credenciales
-    const result = await generateToken(username, password);
-
-    if (result.token) {
-        res.json({ token: result.token });  // Si el token es generado correctamente, lo enviamos como respuesta
-    } else {
-        res.status(401).json({ message: result.error });  // Si ocurre un error, lo respondemos con un mensaje
-    }
+// Arrancar el servidor
+app.listen(5000, () => {
+    console.log('Servidor en puerto 5000');
 });
 
-app.use('/', routes)      // para enrutar peticiones
-
-// Arranque del servidor
-app.listen(5000, () => {
-    console.log('server is listening on port 5000')
-})
+app.use('/', routes);  // Enrutar peticiones

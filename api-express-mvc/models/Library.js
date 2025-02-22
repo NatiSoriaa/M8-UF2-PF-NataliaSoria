@@ -1,5 +1,5 @@
 const mysql = require("mysql2");
-const dbConfig = require("../config/mysql.config.js");
+const dbConfig = require("../config/config.js");
 
 class Library {
   constructor() {
