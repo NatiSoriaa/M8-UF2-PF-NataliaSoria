@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuth(); // Verificar autenticación al cargar la página
+    
+    checkAuth(); 
 
-    // Mostrar contenido basado en la autenticación
     if (document.getElementById("book-table")) {
-        fetchBooks();  // Cargar libros si es posible
+        fetchBooks();  
     }
 
     if (document.querySelector("#createButton")) {
@@ -38,14 +38,14 @@ async function loginUser(event) {
         let data = await response.json();
 
         if (response.ok) {
-            console.log("✅ Token recibido:", data.token);
+            console.log("Token recibido:", data.token);
             localStorage.setItem("token", data.token);
             window.location.href = "index.html";
         } else {
             document.getElementById("errorMessage").innerText = data.message || "Error de autenticación";
         }
     } catch (error) {
-        console.error("❌ Error en el login:", error);
+        console.error("Error en el login:", error);
         document.getElementById("errorMessage").innerText = "Hubo un error con la solicitud.";
     }
 }
@@ -53,15 +53,10 @@ async function loginUser(event) {
 function logoutUser() {
     // Eliminar el token del localStorage
     localStorage.removeItem("token");
-
-    // Redirigir al login o actualizar la interfaz de usuario
-    window.location.href = "login.html"; // Puedes redirigir al login o recargar la página
-
-    // O si quieres solo recargar la página sin redirigir, usa:
-    // location.reload();
+    window.location.href = "login.html"; 
 }
 
-// Verificar autenticación al cargar la página
+// Verificar autenticación al cargar la pagina
 async function checkAuth() {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const actionsSection = document.getElementById("actions-section");
@@ -72,7 +67,7 @@ async function checkAuth() {
         return;
     }
 
-    // Verificar si el token es válido
+    // Verificar si el token es valido
     try {
         let response = await fetch("http://localhost:5000/api/books", {
             method: "GET",
@@ -83,12 +78,15 @@ async function checkAuth() {
 
         if (!response.ok) {
             console.log("Token inválido. Cerrando sesión...");
-            localStorage.removeItem("token"); // Eliminar token inválido
+            localStorage.removeItem("token");
+
             if (actionsSection) actionsSection.style.display = "none";
-        } else {
-            if (actionsSection) actionsSection.style.display = "block"; // Mostrar la biblioteca y sus funcionalidades
+        } 
+        else {
+            if (actionsSection) actionsSection.style.display = "block"; 
         }
-    } catch (error) {
+    } 
+    catch (error) {
         console.error("Error al verificar autenticación:", error);
     }
 }
@@ -141,7 +139,7 @@ function updateTable(books) {
         let celdaAcciones = document.createElement('td');
         row.append(celdaAcciones);
 
-        if (localStorage.getItem('token')) { // Si hay un token, mostrar los botones de editar y eliminar
+        if (localStorage.getItem('token')) {
             let buttonEdit = document.createElement('button');
             buttonEdit.innerHTML = "Modificar";
             buttonEdit.addEventListener('click', editBook);
@@ -165,7 +163,7 @@ async function deleteBook(event) {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`  // Añadir el token en la cabecera
+              
         },
         body: JSON.stringify(deletedBook)
     });
@@ -188,7 +186,7 @@ async function editBook(event) {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`  // Añadir el token en la cabecera
+            
         },
         body: JSON.stringify(modifiedBook)
     });
@@ -209,7 +207,7 @@ async function createBook(event) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`  // Añadir el token en la cabecera
+            
         },
         body: JSON.stringify(newBook)
     });

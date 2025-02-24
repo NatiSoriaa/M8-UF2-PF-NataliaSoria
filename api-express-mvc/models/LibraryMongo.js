@@ -2,17 +2,17 @@
 const { MongoClient, ObjectId} = require("mongodb");
 const dbConfig = require("../config/mongoDB.config.js");
 
-const URL =  "mongodb://localhost:27017";
-const DB = "books";
+// const URL =  "mongodb://localhost:27017";
+// const DB = "books";
 
 class Library {
   constructor() {
-    this.client = new MongoClient(URL);
+    this.client = new MongoClient(dbConfig.URL);
   }  
     async connect() {
       try{
         await this.client.connect();
-        this.database = this.client.db(DB);
+        this.database = this.client.db(dbConfig.DB);
         this.collection = this.database.collection("books");
         console.log("Successfully connected to the MongoDB database.");
       }
@@ -63,7 +63,8 @@ class Library {
   delete = async (bookID) => {
     try {
         await this.connect();
-        const result = await this.collection.deleteOne({ _id: new ObjectId(String(bookID)) }); 
+        const result = await this.collection.deleteOne(
+          { _id: new ObjectId(String(bookID)) }); 
         return result.deletedCount;
     } catch (error) {
         console.error("Error delete:", error);

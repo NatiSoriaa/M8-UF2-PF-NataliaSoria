@@ -1,7 +1,5 @@
 // Importamos el modelo de datos
 const Library = require('../models/Library');
-//const Library = require('../models/LibraryMongo');
-const jwtAuth = require('../mw/auth');  // Middleware de autenticación JWT
 
 // Declaración de controladores 
 

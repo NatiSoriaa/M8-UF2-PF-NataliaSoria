@@ -1,12 +1,12 @@
 const express = require('express');
 const books = require('../controllers/books.js');
-const auth = require('../mw/auth');
-const Library = require('../models/Library');  // Importa la clase Library
+
+const Library = require('../models/Library');  
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-const library = new Library();  // Crea una instancia de la clase Library
+const library = new Library();  
 
 // Ruta para login (verificar usuario ya existente)
 router.post('/api/login', async (req, res) => {
@@ -14,7 +14,7 @@ router.post('/api/login', async (req, res) => {
 
     try {
         // Verificar si el usuario existe
-        const [users] = await library.connection.query('SELECT * FROM users WHERE username = ?', [username]);  // Usa la conexión de Library
+        const [users] = await library.connection.query('SELECT * FROM users WHERE username = ?', [username]); 
         if (users.length === 0) {
             return res.status(401).json({ message: 'Usuario no encontrado' });
         }
@@ -28,7 +28,12 @@ router.post('/api/login', async (req, res) => {
         }
 
         // Si todo es correcto, generar el token
-        const token = jwt.sign({ username: user.username }, 'supersecreto123', { expiresIn: '1h' });
+
+        const SECRET_KEY = process.env.JWT_SECRET || 'supersecreto123';
+
+        const payload = { username: user.username };
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+
         res.json({ token });
 
     } catch (err) {
@@ -37,10 +42,10 @@ router.post('/api/login', async (req, res) => {
     }
 });
 
-// Rutas de libros protegidas
+
 router.get('/api/books', books.getBooks);
-router.post('/api/books', auth.jwtAuth, books.createBook);
-router.put('/api/books', auth.jwtAuth, books.updateBook);
-router.delete('/api/books', auth.jwtAuth, books.deleteBook);
+router.post('/api/books', books.createBook);
+router.put('/api/books', books.updateBook);
+router.delete('/api/books', books.deleteBook);
 
 module.exports = router;
