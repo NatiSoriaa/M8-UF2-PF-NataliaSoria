@@ -33,13 +33,13 @@ class Library {
 
   // Listar todos los libros
   listAll = async () => {
-    const [results, fields] = await this.connection.query("SELECT * FROM books");
+    const [results] = await this.connection.query("SELECT * FROM books");
     return results;
   }
   // Crear un nuevo libro
   create = async (newBook) => {
     try {
-      const [results, fields] = await this.connection.query("INSERT INTO books SET ?", newBook);
+      const [results] = await this.connection.query("INSERT INTO books SET ?", newBook);
       return results.affectedRows;
     }
     catch (error) {
@@ -49,7 +49,7 @@ class Library {
   // Actualizar un libro
   update = async (updatedBook, bookId) => {
     try {
-      const [results, fields] = await this.connection.query("UPDATE books SET ? WHERE id = ?",
+      const [results] = await this.connection.query("UPDATE books SET ? WHERE id = ?",
         [updatedBook, bookId]
       );
       return results.affectedRows;
@@ -61,9 +61,7 @@ class Library {
   // Eliminar un libro
   delete = async (bookId) => {
     try {
-      const [results, fields] = await this.connection.query("DELETE FROM books WHERE id = ?",
-        [bookId]
-      );
+      const [results] = await this.connection.query("DELETE FROM books WHERE id = ?",[bookId]);
       return results.affectedRows;
     }
     catch (error) {

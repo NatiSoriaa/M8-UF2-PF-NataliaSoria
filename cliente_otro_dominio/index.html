@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Biblioteca de Clásicos</h1>
-    <table id="book-table">
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
@@ -19,10 +19,10 @@
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="book-table"></tbody>
     </table>
 
-    <div id="actions-section" style="display: none;">
+    <div id="actions-section">
         <form id="book-form">
             <input type="hidden" id="book-id">
             <input type="text" id="book-title" placeholder="Título" required>

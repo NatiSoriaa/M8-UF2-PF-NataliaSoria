@@ -1,9 +1,9 @@
 const express = require('express');
 const books = require('../controllers/books.js');
 
-const Library = require('../models/Library');  
+const Library = require('../models/Library'); 
+const { jwtAuth, generateToken } = require('../mw/auth.js'); 
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 const library = new Library();  
@@ -28,11 +28,7 @@ router.post('/api/login', async (req, res) => {
         }
 
         // Si todo es correcto, generar el token
-
-        const SECRET_KEY = process.env.JWT_SECRET || 'supersecreto123';
-
-        const payload = { username: user.username };
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+        const token = generateToken(user);
 
         res.json({ token });
 
@@ -43,9 +39,9 @@ router.post('/api/login', async (req, res) => {
 });
 
 
-router.get('/api/books', books.getBooks);
-router.post('/api/books', books.createBook);
-router.put('/api/books', books.updateBook);
-router.delete('/api/books', books.deleteBook);
+router.get('/api/books',books.getBooks);
+router.post('/api/books', jwtAuth, books.createBook);
+router.put('/api/books', jwtAuth, books.updateBook);
+router.delete('/api/books', jwtAuth, books.deleteBook);
 
 module.exports = router;

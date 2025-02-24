@@ -1,5 +1,6 @@
 // Importamos el modelo de datos
 const Library = require('../models/Library');
+// const Library = require('../models/LibraryMongo');
 
 // Declaración de controladores 
 
@@ -20,12 +21,13 @@ const getBooks = async (req, res) => {
 
 const createBook = async (req, res) => {
     try {
-        // Verificamos el JWT para que solo los usuarios autenticados puedan crear libros
-        jwtAuth(req, res, async () => {
             let library = new Library();
+
+            let books = await library.listAll();
 
             // Creamos un libro nuevo
             const newBook = {
+                id: books.length + 1,
                 title: req.body.title,
                 author: req.body.author,
                 year: req.body.year
@@ -42,7 +44,7 @@ const createBook = async (req, res) => {
                 res.status(400).json("Error creating new book...");
             }
             library.close();
-        });
+        
     }
     catch (err) {
         console.log("Error creating new book...", err);
@@ -52,10 +54,9 @@ const createBook = async (req, res) => {
 
 const updateBook = async (req, res) => {
     try {
-        // Verificamos el JWT para que solo los usuarios autenticados puedan actualizar libros
-        jwtAuth(req, res, async () => {
             let library = new Library();
 
+            // const bookID = req.body._id;
             const bookID = req.body.id;
             const updateBooks = {
                 title: req.body.title,
@@ -73,7 +74,7 @@ const updateBook = async (req, res) => {
                 res.status(400).json("Error updating book...");
             }
             library.close();
-        });
+        
     }
     catch (err) {
         console.log("Error updating book...", err);
@@ -83,12 +84,10 @@ const updateBook = async (req, res) => {
 
 const deleteBook = async (req, res) => {
     try {
-        // Verificamos el JWT para que solo los usuarios autenticados puedan eliminar libros
-        jwtAuth(req, res, async () => {
             let library = new Library();
 
-            let bookID = String(req.body.id);
-            let deleted = await library.delete(bookID);
+            // let deleted = await library.delete(req.body._id);
+            let deleted = await library.delete(req.body.id);
 
             if (deleted) {
                 console.log("Book deleted successfully");
@@ -98,7 +97,6 @@ const deleteBook = async (req, res) => {
                 res.status(400).json("Error deleting book...");
             }
             library.close();
-        });
     }
     catch (err) {
         console.log("Error deleting book...", err);
